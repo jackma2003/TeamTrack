@@ -24,16 +24,18 @@ TeamTrack is a modern, full-stack employee management system built with Spring B
 ## 🖼️ Screenshots
 
 ### Employee List View
-- Clean, modern table layout
+<img width="1440" alt="home" src="https://github.com/user-attachments/assets/869a7be8-9fca-4a63-99ce-0ca504bf03d9" />
+- Clean, modern table layout with dark theme
 - Quick access to update and delete actions
-- Animated hover effects
-- Empty state handling
+- Animated hover effects on table rows
+- Responsive design for all screen sizes
 
 ### Add/Update Employee Form
+<img width="1440" alt="add_update" src="https://github.com/user-attachments/assets/fcb31b3e-5194-4b30-9621-c859c6951bc0" />
 - Dynamic form titles based on operation
-- Real-time form validation
+- Beautiful gradient backgrounds with floating particles
 - Smooth animations and transitions
-- Loading states
+- Input validation with visual feedback
 
 ## 🛠️ Tech Stack
 
