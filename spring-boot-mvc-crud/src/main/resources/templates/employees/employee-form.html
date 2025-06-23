@@ -2,46 +2,601 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Save Employee</title>
-
+    <title>TeamTrack</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-</head>
 
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary-color: #0ea5e9;
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #475569;
+            --input-bg: #1e293b;
+            --input-border: #475569;
+            --input-focus: #6366f1;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -20px) rotate(120deg); }
+            66% { transform: translate(20px, -10px) rotate(240deg); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: float 20s infinite;
+        }
+
+        .particle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .particle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(100px, -100px) scale(1.1);
+            }
+            50% {
+                transform: translate(-100px, -200px) scale(0.9);
+            }
+            75% {
+                transform: translate(-50px, -100px) scale(1.05);
+            }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Section */
+        .header-section {
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .breadcrumb-nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Form Container */
+        .form-container {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            animation: fadeInUp 0.8s ease-out;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-title i {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        /* Input Icons */
+        .input-icon {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .form-input:focus ~ .input-icon {
+            color: var(--input-focus);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--success-color), var(--success-hover));
+            color: white;
+            border: none;
+            padding: 0.875rem 2.5rem;
+            font-weight: 600;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-save::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .btn-save:hover::before {
+            left: 100%;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-save:active {
+            transform: translateY(0);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            padding: 0.875rem 2rem;
+            font-weight: 500;
+            border-radius: 12px;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancel:hover {
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Loading State */
+        .form-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .success-message.show {
+            transform: translateX(0);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+                border-radius: 16px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-save,
+            .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
 <body>
 
-    <div class="container">
+<!-- Floating Particles -->
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
 
-        <h3>Employee Directory</h3>
-        <hr>
-
-        <p class="h4 mb-4">Save Employee</p>
-
-        <form action="#" th:action="@{/employees/save}"
-                         th:object="${employee}" method="POST">
-
-            <!-- Add hidden form field to handle the update-->
-
-            <input type="hidden" th:field="*{id}">
-
-            <input type="text" th:field="*{firstName}"
-                   class="form-control mb-4 w-25" placeholder="First name">
-
-            <input type="text" th:field="*{lastName}"
-                   class="form-control mb-4 w-25" placeholder="Last name">
-
-            <input type="text" th:field="*{email}"
-                   class="form-control mb-4 w-25" placeholder="Email">
-
-            <button type="submit" class="btn btn-info col-2">Save</button>
-
-        </form>
-
-        <hr>
-        <a th:href="@{/employees/list}">Back to Employees List</a>
-
+<div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="page-title">TeamTrack</h1>
+        <nav class="breadcrumb-nav">
+            <a th:href="@{/employees/list}">
+                <i class="bi bi-house"></i> Home
+            </a>
+            <i class="bi bi-chevron-right"></i>
+            <span>Save Employee</span>
+        </nav>
     </div>
 
-</body>
+    <!-- Form Container -->
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="bi bi-person-plus-fill"></i>
+            <span th:text="${employee.id != 0} ? 'Update Employee' : 'Add New Employee'">Save Employee</span>
+        </h2>
 
+        <form action="#" th:action="@{/employees/save}"
+              th:object="${employee}" method="POST" id="employeeForm">
+
+            <!-- Hidden field for ID -->
+            <input type="hidden" th:field="*{id}">
+
+            <!-- First Name -->
+            <div class="form-group">
+                <label for="firstName" class="form-label">First Name</label>
+                <div style="position: relative;">
+                    <input type="text"
+                           th:field="*{firstName}"
+                           id="firstName"
+                           class="form-input"
+                           placeholder="Enter first name"
+                           required>
+                    <i class="bi bi-person input-icon"></i>
+                </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+                <label for="lastName" class="form-label">Last Name</label>
+                <div style="position: relative;">
+                    <input type="text"
+                           th:field="*{lastName}"
+                           id="lastName"
+                           class="form-input"
+                           placeholder="Enter last name"
+                           required>
+                    <i class="bi bi-person input-icon"></i>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <div style="position: relative;">
+                    <input type="email"
+                           th:field="*{email}"
+                           id="email"
+                           class="form-input"
+                           placeholder="Enter email address"
+                           required>
+                    <i class="bi bi-envelope input-icon"></i>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-check-circle"></i>
+                    <span th:text="${employee.id != 0} ? 'Update Employee' : 'Save Employee'">Save</span>
+                </button>
+
+                <a th:href="@{/employees/list}" class="btn-cancel">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to List
+                </a>
+            </div>
+        </form>
+
+        <!-- Loading State -->
+        <div class="form-loading" id="formLoading">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Message -->
+<div class="success-message" id="successMessage">
+    <i class="bi bi-check-circle"></i> Employee saved successfully!
+</div>
+
+<script>
+    // Form submission with loading state
+    document.getElementById('employeeForm').addEventListener('submit', function(e) {
+        const formLoading = document.getElementById('formLoading');
+        formLoading.style.display = 'flex';
+
+        // Add subtle animation to form inputs
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.style.transition = 'opacity 0.3s ease';
+            input.style.opacity = '0.5';
+        });
+    });
+
+    // Input focus animations
+    const formInputs = document.querySelectorAll('.form-input');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.3s ease';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+
+    // Add animation to form elements on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const formGroups = document.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                group.style.transition = 'all 0.3s ease';
+                group.style.opacity = '1';
+                group.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Animate form actions
+        const formActions = document.querySelector('.form-actions');
+        formActions.style.opacity = '0';
+        formActions.style.transform = 'translateY(20px)';
+
+        setTimeout(() => {
+            formActions.style.transition = 'all 0.3s ease';
+            formActions.style.opacity = '1';
+            formActions.style.transform = 'translateY(0)';
+        }, formGroups.length * 100);
+    });
+
+    // Show success message simulation (for demonstration)
+    // In real implementation, this would be triggered after successful save
+    function showSuccessMessage() {
+        const successMessage = document.getElementById('successMessage');
+        successMessage.classList.add('show');
+
+        setTimeout(() => {
+            successMessage.classList.remove('show');
+        }, 3000);
+    }
+</script>
+
+</body>
 </html>
